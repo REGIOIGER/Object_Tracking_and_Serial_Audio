@@ -31,8 +31,8 @@
     int V_MIN = 113;
     int V_MAX = 245;
 //default capture width and height
-const int FRAME_WIDTH = 640;
-const int FRAME_HEIGHT = 480;
+const int FRAME_WIDTH = 480;
+const int FRAME_HEIGHT = 320;
 //max number of objects to be detected in frame
 const int MAX_NUM_OBJECTS=50;
 //minimum and maximum object area
@@ -97,7 +97,7 @@ void morphOps(Mat &thresh){
 
 
 }
-void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed){
+void trackFilteredObject(int &x, int &y, double &refArea, Mat threshold, Mat &cameraFeed){
 
 	Mat temp;
 	threshold.copyTo(temp);
@@ -107,7 +107,7 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed){
 	//find contours of filtered image using openCV findContours function
 	findContours(temp,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );
 	//use moments method to find our filtered object
-	double refArea = 0;
+	//double refArea = 0;
 	bool objectFound = false;
 	if (hierarchy.size() > 0) {
 		int numObjects = hierarchy.size();
@@ -133,7 +133,7 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed){
 			}
 			//let user know you found an object
 			if(objectFound ==true){
-				putText(cameraFeed,"Objeto de seguimiento",Point(0,50),1,1,Scalar(0,255,0),2);
+				putText(cameraFeed,"Objeto de seguimiento Area:"+intToString((int)refArea),Point(0,50),1,1,Scalar(0,255,0),2);
 				//draw object location on screen
 				drawObject(x,y,cameraFeed);}
 
@@ -150,10 +150,10 @@ JNIEXPORT jintArray JNICALL Java_trackball_ludobots_com_Tutorial2Activity_Object
     Mat& mGr  = *(Mat*)addrGray;
     Mat& cameraFeed = *(Mat*)addrRgba;
 
-    jint size = 2;
-    jintArray P_xy;
+    jint size = 3;
+    jintArray P_xya;
 
-    P_xy = env->NewIntArray(size);
+    P_xya = env->NewIntArray(size);
 
     //jsize len = env->GetArrayLength(HSV_values);
     jint *body = env->GetIntArrayElements(HSV_values, 0);
@@ -177,8 +177,9 @@ JNIEXPORT jintArray JNICALL Java_trackball_ludobots_com_Tutorial2Activity_Object
 	Mat threshold;
 	//x and y values for the location of the object
 	int x=0, y=0;
+	double refArea=0;
 
-	        if(P_xy == NULL) {
+	        if(P_xya == NULL) {
 	                return NULL;
 	        }
 
@@ -220,11 +221,12 @@ JNIEXPORT jintArray JNICALL Java_trackball_ludobots_com_Tutorial2Activity_Object
 
 			fill[0] = 0;
 			fill[1] = 0;
+			fill[2] = 0;
 			//if(flag)threshold.copyTo(cameraFeed);
 			//putText(cameraFeed,"H+:"+intToString(H_MAX)+", H-:"+intToString(H_MIN),Point(0,50),1,1,Scalar(255,255,255),2);
 
-			env->SetIntArrayRegion(P_xy, 0, size, fill);
-			return P_xy;
+			env->SetIntArrayRegion(P_xya, 0, size, fill);
+			return P_xya;
 
 		} else {
 
@@ -234,14 +236,15 @@ JNIEXPORT jintArray JNICALL Java_trackball_ludobots_com_Tutorial2Activity_Object
 		//this function will return the x and y coordinates of the
 		//filtered object
 		if(trackObjects)
-			trackFilteredObject(x,y,threshold,cameraFeed);
+			trackFilteredObject(x,y,refArea,threshold,cameraFeed);
 		fill[0] = x;
 		fill[1] = y;
+		fill[2] = refArea;
 		if(flag == 1)threshold.copyTo(cameraFeed);
 		//putText(cameraFeed,"H+:"+intToString(H_MAX)+", H-:"+intToString(H_MIN),Point(0,50),1,1,Scalar(255,255,255),2);
 
-		env->SetIntArrayRegion(P_xy, 0, size, fill);
-		return P_xy;
+		env->SetIntArrayRegion(P_xya, 0, size, fill);
+		return P_xya;
 		}
 }
 }

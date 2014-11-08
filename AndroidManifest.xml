@@ -5,32 +5,18 @@
           android:versionName="2.1">
 
     <application
-        android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:name="Application" >
-        <activity
-            android:label="@string/app_name"
-            android:name="MainMenu" >
-            <intent-filter >
-                <action android:name="android.intent.action.MAIN" />
+        android:icon="@drawable/icon"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
 
+        <activity android:name="Tutorial2Activity"
+                  android:label="@string/app_name"
+                  android:screenOrientation="landscape"
+                  android:configChanges="keyboardHidden|orientation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name="SerialPortPreferences" >
-        </activity>
-       <activity android:name="ConsoleActivity"
-                  android:label="@string/app_name"
-                  android:screenOrientation="landscape"
-                  android:configChanges="keyboardHidden|orientation">
-            
-        </activity>
-        
-       <activity android:name="Tutorial2Activity"
-                  android:label="@string/app_name"
-                  android:screenOrientation="landscape"
-                  android:configChanges="keyboardHidden|orientation">
-
         </activity>
     </application>
     
@@ -48,6 +34,6 @@
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
     <uses-feature android:name="android.hardware.camera.front" android:required="false"/>
     <uses-feature android:name="android.hardware.camera.front.autofocus" android:required="false"/>
-    
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
 </manifest>

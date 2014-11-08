@@ -26,16 +26,7 @@ include /home/helios/Dev/OpenCV-2.4.8.2-Tegra-sdk/sdk/native/jni/OpenCV-tegra3.m
 
 LOCAL_MODULE    := object_tracking
 LOCAL_SRC_FILES := jni_prog_00.cpp
-LOCAL_SRC_FILES += SerialPort.c
 LOCAL_LDLIBS +=  -llog -ldl
 
 include $(BUILD_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-
-TARGET_PLATFORM := android-3
-LOCAL_MODULE    := serial_port
-LOCAL_SRC_FILES := SerialPort.c
-LOCAL_LDLIBS    := -llog
-
-include $(BUILD_SHARED_LIBRARY)
